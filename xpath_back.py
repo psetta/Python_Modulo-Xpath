@@ -22,8 +22,6 @@ def xml2dic(doc):
 	doc_string = doc_string.replace("\n","").replace("\t","")
 	elements = findall("<([^>/]*)>([^</]*)|<([^>]*)>",doc_string)
 	
-	print elements
-	
 	xml_tags = [[e[2]+e[0],e[1]] for e in elements]
 	
 	xml_elements = []
@@ -34,17 +32,20 @@ def xml2dic(doc):
 		elemento = e[0].split(" ")[0]
 		atributos = e[0].split(" ")[1:]
 		dict_atributos = {}
+		for a in atributos:
+			dict_atributos[a.split("=")[0]] = a.split("=")[1] 
+		
+		if elemento[0] != "/":
+			xml_elements.append({"element":elemento,"atributes":dict_atributos,
+								"value":e[1],"parent":pais[:]})
+		
 		if elemento[0] == "/":
 			pais.remove(elemento[1:])
 		else:
 			pais.append(elemento)
-		for a in atributos:
-			dict_atributos[a.split("=")[0]] = a.split("=")[1] 
-			
-		xml_elements.append({"element":elemento,"atributes":dict_atributos,"value":e[1],"parent":pais[:]})
 	
 	for e in xml_elements:
-		print e
+		print e["element"],e["parent"],e["atributes"],e["value"]
 	
 	return None
 
