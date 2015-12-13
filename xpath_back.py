@@ -43,11 +43,17 @@ def xml2dic(doc):
 			pais.remove(elemento[1:])
 		else:
 			pais.append(elemento)
+			
+	#for e in xml_elements:
+	#	print e
 	
 	for e in xml_elements:
-		print e["element"],e["parent"],e["atributes"],e["value"]
+		print {"element":e["element"]}
+		if e["parent"]: print "\t", {"parents":e["parent"]}
+		if e["atributes"]: print "\t", {"atributes":e["atributes"]}
+		if e["value"]: print "\t", {"value":e["value"]}
 	
 	return None
 
 	
-print xml2dic("proba.xml")
+xml2dic("proba.xml")
