@@ -1,7 +1,7 @@
 <root>
 	<escritores>
-		<escritor rango=maestro>Juan</escritor>
-		<escritor rango=doctor id=23>Pablo </escritor>
+		<escritor rango="maestro">Juan</escritor>
+		<escritor rango="doctor" id="23">Pablo </escritor>
 		<escritor> Jesus </escritor>
 		<escritor> Alberto</escritor>
 	</escritores>
