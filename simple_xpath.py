@@ -4,8 +4,6 @@
 
 from re import findall
 
-ID_element = 0
-
 class element():
 	def __init__(self,id,name,value,attributes,parents):
 		self.id = id
@@ -27,7 +25,7 @@ def simple_check_xml(doc):
 	return True
 	
 def xml2element_list(doc):
-	global ID_element
+	ID_element = 0
 	doc_string = open(doc,"r").read()
 	doc_string = doc_string.replace("\n","").replace("\t","")
 	string_elements = findall("<([^>/]*)>([^</]*)|<([^>]*)>",doc_string)
@@ -47,7 +45,7 @@ def xml2element_list(doc):
 			parents.remove(parents[-1])
 		else:
 			parents.append(ID_element)
-		ID_element += 1
+			ID_element += 1
 	return xml_elements
 	
 def element_list2dict(element_list):
@@ -69,6 +67,21 @@ def xml2dict(doc):
 	return element_list2dict(xml_elements)
 	
 def xpath_xmldict(query,xmldict):
-	return None
+	try:
+		chopped_query = [x.split("/") for x in query.split("//")]
+		resultado = xmldict
+		ID = 0
+		for section in chopped_query:
+			for word in section:
+				if word:
+					if resultado[ID]["name"] == word:
+						resultado = resultado[ID]["value"]
+						ID += 1
+			return resultado
+	except:
+		return "None"
+		
+#for e in xml2element_list("proba.xml"):
+#	print e.id, e.name, e.value, e.attributes, e.parents
 
-print xml2dict("proba.xml")
+print xpath_xmldict("/root/escritores",xml2dict("proba.xml"))
