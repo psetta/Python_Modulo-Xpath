@@ -67,5 +67,8 @@ def element_list2dict(element_list):
 def xml2dict(doc):
 	xml_elements = xml2element_list(doc)
 	return element_list2dict(xml_elements)
+	
+def xpath_xmldict(query,xmldict):
+	return None
 
 print xml2dict("proba.xml")
