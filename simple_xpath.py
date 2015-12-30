@@ -81,7 +81,7 @@ def xpath_xmldict(query,xmldict):
 	except:
 		return "None"
 		
-#for e in xml2element_list("proba.xml"):
-#	print e.id, e.name, e.value, e.attributes, e.parents
+for e in xml2element_list("doc_xml_02.xml"):
+	print e.id, e.name, "atributos: "+str(e.attributes), "parents: "+str(e.parents), "valor: "+str(e.value)
 
-print xpath_xmldict("/root/escritores",xml2dict("proba.xml"))
+#print xpath_xmldict("/root/escritores",xml2dict("doc_xml_01.xml"))
