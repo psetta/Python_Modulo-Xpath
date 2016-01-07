@@ -1,0 +1,8 @@
+<?xml version="1.0" ?>
+<alumnos>
+
+ <Nombre>Richal</nombre><email>richal@ejemplo.com</email>
+
+ <nombre>Chicho</Nombre><email>chicho@ejemplo.com</email>
+
+</alumnos>

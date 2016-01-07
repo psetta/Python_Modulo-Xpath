@@ -2,7 +2,13 @@
 
 #Modulo para empregar XPath en Python
 
+from sys import argv
 from re import findall
+
+if len(argv) > 1:
+	arg_doc = argv[1]
+	if not findall("\.xml$",arg_doc):
+		arg_doc += ".xml"
 
 class element():
 	def __init__(self,id,name,value,attributes,parents):
@@ -33,20 +39,30 @@ def xml2element_list(doc):
 	xml_elements = []
 	parents = []
 	for e in string_elements:
-		elemento = e[0].split(" ")[0]
-		atributos = e[0].split(" ")[1:]
-		dict_atributos = {}
-		for a in atributos:
-			dict_atributos[a.split("=")[0]] = findall('".+"',a.split("=")[1]) 
-		if elemento[0] != "/":
-			xml_elements.append(element(ID_element,elemento,e[1] if e[1] else {},
-								dict_atributos,parents[:]))
-		if elemento[0] == "/":
-			parents.remove(parents[-1])
-		else:
-			parents.append(ID_element)
-			ID_element += 1
+		elemento = e[0].split(" ")[0].strip()
+		if elemento[0:4] != "?xml":
+			atributos = e[0].split(" ")[1:]
+			dict_atributos = {}
+			for a in atributos:
+				dict_atributos[a.split("=")[0]] = findall('".+"',a.split("=")[1]) 
+			if elemento[0] != "/":
+				xml_elements.append(element(ID_element,elemento,
+									" ".join(e[1].strip().split()) if e[1] else {},
+									dict_atributos,parents[:]))
+			if elemento[0] == "/":
+				parents.remove(parents[-1])
+			else:
+				parents.append(ID_element)
+				ID_element += 1
 	return xml_elements
+	
+def show_xml2element_list(doc):
+	element_list = xml2element_list(doc)
+	for e in element_list:
+		print ("\t"*len(e.parents)+"id:"+str(e.id)+" <"+
+				e.name+((" "+str(e.attributes)+" ") if e.attributes else "")+
+				((" (parents: "+str(e.parents)) if e.parents else "")+")> "+
+				(("'"+str(e.value)+"'") if e.value else ""))
 	
 def element_list2dict(element_list):
 	dict_xml = {}
@@ -79,9 +95,9 @@ def xpath_xmldict(query,xmldict):
 						ID += 1
 			return resultado
 	except:
-		return "None"
+		return None
 		
-for e in xml2element_list("doc_xml_02.xml"):
-	print e.id, e.name, "atributos: "+str(e.attributes), "parents: "+str(e.parents), "valor: "+str(e.value)
+if len(argv) > 1:
+	show_xml2element_list(arg_doc)
 
 #print xpath_xmldict("/root/escritores",xml2dict("doc_xml_01.xml"))
