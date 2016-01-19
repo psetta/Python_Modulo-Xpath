@@ -61,7 +61,7 @@ def show_xml2element_list(doc):
 	for e in element_list:
 		print ("\t"*len(e.parents)+"id:"+str(e.id)+" <"+
 				e.name+((" "+str(e.attributes)+" ") if e.attributes else "")+
-				((" (parents: "+str(e.parents)) if e.parents else "")+")> "+
+				((" (parents: "+str(e.parents)+")") if e.parents else "")+"> "+
 				(("'"+str(e.value)+"'") if e.value else ""))
 	
 def element_list2dict(element_list):
@@ -99,5 +99,8 @@ def xpath_xmldict(query,xmldict):
 		
 if len(argv) > 1:
 	show_xml2element_list(arg_doc)
+	dict = xml2dict(arg_doc)
+	#for a in xpath_xmldict("/root/execucion",dict).values():
+	#	print a
 
 #print xpath_xmldict("/root/escritores",xml2dict("doc_xml_01.xml"))
