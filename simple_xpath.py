@@ -39,9 +39,12 @@ def xml2element_list(doc):
 	xml_elements = []
 	parents = []
 	for e in string_elements:
-		elemento = e[0].split(" ")[0].strip()
+		total_e = e[0].split(" ")
+		total_e = [ec for ec in total_e if ec]
+		elemento = total_e[0]
 		if elemento[0:4] != "?xml":
-			atributos = e[0].split(" ")[1:]
+			atributos = total_e[1:]
+			atributos = [a for a in atributos if a]
 			dict_atributos = {}
 			for a in atributos:
 				dict_atributos[a.split("=")[0]] = findall('".+"',a.split("=")[1]) 
@@ -98,8 +101,8 @@ def xpath_xmldict(query,xmldict):
 		return None
 		
 if len(argv) > 1:
-	show_xml2element_list(arg_doc)
-	dict = xml2dict(arg_doc)
+	sshow_xml2element_list(arg_doc)
+	#dict = xml2dict(arg_doc)
 	#for a in xpath_xmldict("/root/execucion",dict).values():
 	#	print a
 
