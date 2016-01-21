@@ -17,6 +17,15 @@ class element():
 		self.value = value
 		self.attributes = attributes
 		self.parents = parents
+	def __repr__(self):
+		return ("element("+str(self.id)+", "+str(self.name)+", "+
+				str(self.attributes)+", "+str(self.parents)+")")
+	def __str__(self):
+		return ("id: "+str(self.id)+", "+
+				"name: "+str(self.name)+", "+
+				"value: "+str(self.value)+", "+
+				"attributes: "+str(self.attributes)+", "+
+				"parents: "+str(self.parents))
 
 def simple_check_xml(doc):
 	doc_string = open(doc,"r").read()
@@ -89,21 +98,63 @@ def xpath_xmldict(query,xmldict):
 	try:
 		chopped_query = [x.split("/") for x in query.split("//")]
 		resultado = xmldict
+		total_resultados = []
 		ID = 0
 		for section in chopped_query:
 			for word in section:
 				if word:
 					if resultado[ID]["name"] == word:
-						resultado = resultado[ID]["value"]
 						ID += 1
-			return resultado
+		return resultado
 	except:
 		return None
 		
-if len(argv) > 1:
-	sshow_xml2element_list(arg_doc)
-	#dict = xml2dict(arg_doc)
-	#for a in xpath_xmldict("/root/execucion",dict).values():
-	#	print a
+def xpath_xmllist(query,xmllist):
+		chopped_query = query.split("/")
+		chopped_query = [[q] for q in chopped_query if q]
+		for c in chopped_query:
+			if findall("\[(.+)\]",c[0]):
+				c.append(int(findall("\[(.+)\]",c[0])[0]))
+				c[0] = c[0].split("[")[0]
+			else:
+				c.append(0)
+		xml = xmllist
+		dict_ids = {}
+		for query in chopped_query[:len(chopped_query)-1]:
+			q,num = query
+			dict_ids[q] = []
+			for element in xml:
+				if element.name == q:
+					dict_ids[q].append(element.id)
+			if num > 0:
+				dict_ids[q] = [dict_ids[q][num]]
+		resultado = []
+		values_ids = dict_ids.values()
+		for element in xml:
+			if len(element.parents) == len(values_ids):
+				verdadeiros = [True for n in range(len(values_ids)) 
+								if element.parents[n] in values_ids[n]]
+				if len(verdadeiros) == len(values_ids):
+					resultado.append(element)
+		if chopped_query[-1][1]:
+			return [resultado[chopped_query[-1][1]]]
+		else:
+			return resultado
+			
+def help():
+	print u"Funcións:"
+	print "\t> simple_check_xml(doc)"
+	print "\t> xml2element_list(doc)"
+	print "\t> show_xml2element_list(doc)"
+	print "\t> element_list2dict(element_list)"
+	print "\t> xml2dict(doc)"
+	print "\t> xpath_xmldict(query,xmldict)"
+	print "\t> xpath_xmllist(query,xmllist)"
+		
+#if len(argv) > 1:
 
-#print xpath_xmldict("/root/escritores",xml2dict("doc_xml_01.xml"))
+	#for i in xml2element_list(arg_doc):
+	#	print "\t"*len(i.parents)+str(i)
+	
+	#lista_elementos = xml2element_list(arg_doc)
+	#resultado = xpath_xmllist("/root/execucion/script",lista_elementos)
