@@ -43,7 +43,7 @@ def xml2element_list(doc):
 	ID_element = 0
 	doc_string = open(doc,"r").read()
 	doc_string = doc_string.replace("\n","").replace("\t","")
-	string_elements = findall("<([^>/]*)>([^</]*)|<([^>]*)>",doc_string)
+	string_elements = findall("<([^>]*)>([^</]*)|</([^>]*)>",doc_string)
 	string_elements = [[e[2]+e[0],e[1]] for e in string_elements]
 	xml_elements = []
 	parents = []
@@ -59,7 +59,7 @@ def xml2element_list(doc):
 				dict_atributos[a.split("=")[0]] = findall('".+"',a.split("=")[1]) 
 			if elemento[0] != "/":
 				xml_elements.append(element(ID_element,elemento,
-									" ".join(e[1].strip().split()) if e[1] else {},
+									" ".join(e[1].strip().split()) if e[1] else "",
 									dict_atributos,parents[:]))
 			if elemento[0] == "/":
 				parents.remove(parents[-1])
@@ -109,7 +109,7 @@ def xpath_xmldict(query,xmldict):
 	except:
 		return None
 		
-def xpath_xmllist(query,xmllist):
+def xpath_xmllist(query,xmllist,all=False):
 		chopped_query = query.split("/")
 		chopped_query = [[q] for q in chopped_query if q]
 		for c in chopped_query:
@@ -120,7 +120,7 @@ def xpath_xmllist(query,xmllist):
 				c.append(0)
 		xml = xmllist
 		dict_ids = {}
-		for query in chopped_query[:len(chopped_query)-1]:
+		for query in chopped_query[:len(chopped_query)+(all-1)]:
 			q,num = query
 			dict_ids[q] = []
 			for element in xml:
@@ -131,11 +131,17 @@ def xpath_xmllist(query,xmllist):
 		resultado = []
 		values_ids = dict_ids.values()
 		for element in xml:
-			if len(element.parents) == len(values_ids):
-				verdadeiros = [True for n in range(len(values_ids)) 
-								if element.parents[n] in values_ids[n]]
-				if len(verdadeiros) == len(values_ids):
+			if all:
+				verdadeiros = [True for n in range(len(element.parents)) 
+									if element.parents[n] in values_ids[n]]
+				if len(verdadeiros) > 0:
 					resultado.append(element)
+			else:
+				if len(element.parents) == len(values_ids):
+					verdadeiros = [True for n in range(len(values_ids)) 
+									if element.parents[n] in values_ids[n]]
+					if len(verdadeiros) == len(values_ids):
+						resultado.append(element)
 		if chopped_query[-1][1]:
 			return [resultado[chopped_query[-1][1]]]
 		else:
@@ -150,7 +156,7 @@ def help():
 	print "\t> xml2dict(doc)"
 	print "\t> xpath_xmldict(query,xmldict)"
 	print "\t> xpath_xmllist(query,xmllist)"
-		
+	
 #if len(argv) > 1:
 
 	#for i in xml2element_list(arg_doc):
